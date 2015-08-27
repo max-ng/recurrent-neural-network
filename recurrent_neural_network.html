@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html>
+ <head>
+	<title>recurrent neural network </title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script type="text/javascript" src="matrix.js"></script>
+
+
+ </head>
+<body>
+ <h1>recurrent neural network</h1>
+ <p>input = 0,0,1,0,0,1,0,0,1</p>
+ <p id = "result" >output = </p>
+
+
+<script type="text/javascript">
+
+function rnn(){
+       var input = [[0,0,1,0,0,1,0,0,1]];
+       var rate = 0.05;
+       var w_x = Math.random() - 0.5 ;
+       var w_y = Math.random() - 0.5 ;
+       var b = Math.random() - 0.5 ;
+       var l = input[0].length;
+       var hidden_input = matrix.zeros(1, l);
+
+       var output = matrix.zeros(1, l);
+       var delta ;
+       
+       for (var i = 0; i < 100000; i++) {
+
+         for (var j = 0; j < l -1 ; j++){
+            hidden_input[0][j] = w_x * input[0][j] + w_y * output[0][j] + b;
+            output[0][j + 1] = 1 / (1 + Math.exp(-1* hidden_input[0][j])); 
+         }
+        
+         for (var j = 0; j < l - 1 ; j++){
+
+             for (var t = 0; t < j + 1; t++){
+                var d = j - t;
+                if (t == 0){
+                  delta = output[0][d + 1] - input[0][d + 1];
+                     
+                }
+
+                else{
+                  delta = w_y * output[0][d + 1] * ( 1 - output[0][d + 1]) * delta ;
+                  }
+
+                  w_x = w_x - rate * delta * input[0][d];
+                  w_y = w_y - rate * delta * output[0][d];
+                  b = b - rate * delta ;
+                
+            }
+         }
+      }
+      for (var j = 0; j < l - 1 ; j++){
+            hidden_input[0][j] = w_x * input[0][j] + w_y * output[0][j] + b;
+            output[0][j + 1] = 1 / (1 + Math.exp(-1 * hidden_input[0][j])); 
+         }
+
+    return output;
+  }
+
+var F = rnn();
+document.getElementById("result").innerHTML = "output=" + F;
+
+      
+
+
+
+
+
+
+</script>
+</body>
+</html>
